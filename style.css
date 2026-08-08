@@ -9,6 +9,60 @@
     box-sizing: border-box;
 }
 
+
+/* ========================================
+   ANIMAÇÕES DO HERO (migradas de script.js)
+======================================== */
+
+/* Entrada do bloco principal */
+.profile-hero {
+    animation: heroEntrance 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes heroEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(35px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Movimento suave da foto */
+.hero-image {
+    transform: scale(1.04);
+    animation: imageZoom 8s ease-out forwards;
+}
+
+@keyframes imageZoom {
+    from { transform: scale(1.04); }
+    to   { transform: scale(1); }
+}
+
+/* Animação do conteúdo (agora que `.profile-info` está fora do hero)
+   aplicamos aos seletors globais abaixo */
+.profile-info h1,
+.username,
+.description {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: textReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.profile-info h1 { animation-delay: 0.45s; }
+.username { animation-delay: 0.60s; }
+.description { animation-delay: 0.75s; }
+
+@keyframes textReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 body {
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
@@ -73,6 +127,26 @@ body {
     background: #240000;
     box-shadow: 0 25px 70px rgba(0, 0, 0, 0.40);
     margin-bottom: 25px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
+}
+
+.profile-hero:hover {
+    transform: translateY(-6px) scale(1.005);
+    box-shadow: 0 35px 100px rgba(0, 0, 0, 0.45);
+}
+
+.profile-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at top center, rgba(255, 255, 255, 0.12), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+.profile-hero:hover::before {
+    opacity: 1;
 }
 
 
@@ -89,6 +163,11 @@ body {
     object-position: center center;
     display: block;
     transform: scale(1.02);
+    transition: transform 0.9s ease;
+}
+
+.profile-hero:hover .hero-image {
+    transform: scale(1.08);
 }
 
 
@@ -98,11 +177,8 @@ body {
 
 .hero-overlay {
     position: absolute;
-
     inset: 0;
-
     z-index: 1;
-
     background:
         linear-gradient(
             to bottom,
@@ -111,6 +187,22 @@ body {
             rgba(30, 0, 0, 0.75) 82%,
             rgba(30, 0, 0, 0.97) 100%
         );
+    opacity: 0.98;
+    transition: opacity 0.6s ease, background 0.8s ease;
+    animation: overlayPulse 10s ease-in-out infinite alternate;
+}
+
+.profile-hero:hover .hero-overlay {
+    opacity: 0.85;
+}
+
+@keyframes overlayPulse {
+    from {
+        opacity: 0.96;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 
@@ -122,71 +214,7 @@ body {
     Use the general `.profile-info` rules defined later for spacing. */
 
 
-/* ========================================
-   NOME
-======================================== */
-
-.profile-hero .profile-info h1 {
-
-    font-family:
-        Georgia,
-        'Times New Roman',
-        serif;
-
-    font-size: clamp(
-        38px,
-        6vw,
-        64px
-    );
-
-    font-weight: 700;
-
-    line-height: 1.05;
-
-    color: #ffffff;
-
-    margin-bottom: 10px;
-
-    letter-spacing: -1px;
-
-    text-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.55);
-}
-
-
-/* ========================================
-   @USUARIO
-======================================== */
-
-.profile-hero .username {
-
-    color: rgba(255, 255, 255, 0.90);
-
-    font-size: 14px;
-
-    margin-bottom: 12px;
-}
-
-
-/* ========================================
-   APRESENTAÇÃO
-======================================== */
-
-.profile-hero .description {
-
-    max-width: 520px;
-
-    margin: 0 auto;
-
-    color: rgba(255, 255, 255, 0.94);
-
-    font-size: 15px;
-
-    line-height: 1.55;
-
-    text-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.55);
-}
+/* profile-info (agora fora do hero) estilizado mais abaixo */
 /* ========================================
    INFORMAÇÕES DO PERFIL
 ======================================== */
@@ -194,6 +222,9 @@ body {
 .profile-info {
     width: 100%;
     margin: 18px 0 28px;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: contentFade 0.9s cubic-bezier(0.25, 0.8, 0.25, 1) 0.4s forwards;
 }
 .profile-info h1 {
     font-family: Georgia, 'Times New Roman', serif;
@@ -204,6 +235,13 @@ body {
     margin: 6px 0 12px;
     letter-spacing: -1px;
     text-shadow: 0 4px 20px rgba(0,0,0,0.55);
+}
+
+@keyframes contentFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .username {
@@ -246,34 +284,39 @@ body {
 
 .link-button {
     position: relative;
-
     width: 100%;
     min-height: 72px;
-
     display: flex;
     align-items: center;
-
     padding: 12px 18px;
-
     border-radius: 20px;
-
     background: rgba(255, 255, 255, 0.96);
-
     color: #17171c;
-
     text-decoration: none;
-
     border: 1px solid rgba(255, 255, 255, 0.35);
-
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.20);
-
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.20);
     overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
 
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        background 0.25s ease;
+.link-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 0;
+    transform: scaleX(0.95);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.link-button:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.link-button:hover .link-icon svg {
+    transform: scale(1.08);
 }
 
 
@@ -366,22 +409,18 @@ body {
 .link-arrow {
     width: 34px;
     height: 34px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
-
     background: #f1f1f4;
-
     color: #17171c;
-
     font-size: 18px;
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
 
-    transition:
-        transform 0.25s ease,
-        background 0.25s ease;
+.link-button:hover .link-arrow {
+    transform: translateX(6px) scale(1.02);
 }
 
 
@@ -390,21 +429,15 @@ body {
 ======================================== */
 
 .link-button:hover {
-
     transform: translateY(-4px);
-
     background: #ffffff;
-
-    box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.30);
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.26);
 }
 
 .link-button:hover .link-arrow {
-
-    transform: translateX(4px);
-
+    transform: translateX(6px);
     background: #17171c;
-
     color: #ffffff;
 }
 
@@ -414,9 +447,7 @@ body {
 ======================================== */
 
 .link-button:active {
-
     transform: scale(0.98);
-
 }
 
 
@@ -425,9 +456,7 @@ body {
 ======================================== */
 
 .link-button {
-
-    animation: linkAppear 0.6s ease both;
-
+    animation: buttonPop 0.6s ease both;
 }
 
 .link-button:nth-child(1) {
@@ -442,44 +471,19 @@ body {
     animation-delay: 0.3s;
 }
 
+.link-button:nth-child(4) {
+    animation-delay: 0.4s;
+}
 
-@keyframes linkAppear {
-
+@keyframes buttonPop {
     from {
         opacity: 0;
-
-        transform: translateY(15px);
+        transform: translateY(18px) scale(0.98);
     }
-
     to {
         opacity: 1;
-
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
-
-}
-
-
-/* ========================================
-   EFEITO AO PASSAR O MOUSE
-======================================== */
-
-.link-button:hover {
-    transform: translateY(-3px);
-
-    background: #ffffff;
-
-    box-shadow:
-        0 14px 35px rgba(0, 0, 0, 0.30);
-}
-
-
-/* ========================================
-   EFEITO AO CLICAR
-======================================== */
-
-.link-button:active {
-    transform: scale(0.98);
 }
 
 
